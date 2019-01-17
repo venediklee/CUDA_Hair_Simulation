@@ -1,16 +1,16 @@
 //use these define statements for easily manipulating the code
-#define HAIRCOUNT 32*1000
-#define HEADRADIUS 20.0f
-#define HAIRLENGTH 10.0f
-#define INTERPOLATION 30
-#define SMOOTHING 5 //1 or more
+#define HAIRCOUNT 32*3000
+#define HEADRADIUS 50.0f
+#define HAIRLENGTH 75.0f
+#define INTERPOLATION 14
+#define SMOOTHING 30 //1 or more
 #define SHOWTOTALERRORCOUNT true
 #define PRINT1RANDOMHAIRINFORMATION false //change journey  of a hair strand too
 //#############################################         CPU 
-#define CPUTHREADCOUNT 16
+#define CPUTHREADCOUNT 8
 //#############################################         GPU
-#define BLOCKSIZE 32*25
-#define BLOCKCOUNT 40//blockCount*blockSize=hairCount -- do not pass boundary values like block size<=1024 (gpu spesific)
+#define BLOCKSIZE 32*24
+#define BLOCKCOUNT 125//blockCount*blockSize=hairCount -- do not pass boundary values like block size<=1024 (gpu spesific)
 
 
 #include "HairSimCPU.h"//includes other include statements
@@ -41,12 +41,11 @@ double GetCounter()
 }
 
 
-//TODO ################## performance settings are on && rtc(runtime error check) is off
 // main routine that executes
 int main()
 {
 	//TODO simplify the code by using helper_math.h functions lerp, length, normalize
-	// TODO check for memory leaks
+
 
 	int hairCount = HAIRCOUNT;//number of individual hair strands, make it multiple of 32 for equal partition
 	float headRadius = HEADRADIUS;//radius of the head(sphere)
@@ -94,10 +93,6 @@ int main()
 	HairInterpolationSetter(hairCount, hairPoints, interpolation);
 	HairPointBSetter(hairCount, headRadius, hairLength, hairPoints);
 
-	/*	TODO GPU+CPU (performance improvement):
-	*	instead of hairCount, create hairCount/32 hairs, and for each hair create 31 additional copies near that hair & control them together
-	*	this will make branching within warps much much less
-	*/
 	/*	TODO additional (memory improvement):
 	*	remove interpolated points which dont change direction of hair, i.e which dont collide with head, to save memory
 	*		you can re-add them when a wind blows, this works like LOD
@@ -110,7 +105,7 @@ int main()
 		JourneyOfAHairStrand(hairPoints + hairIndexOfRandomHair, hairIndexOfRandomHair, false);
 		std::cout<<std::endl;
 	}
-	if(SHOWTOTALERRORCOUNT) for (int i = 0; i < hairCount; i++) totalErrorCount += JourneyOfAHairStrand(hairPoints + i, i, false);
+	if(SHOWTOTALERRORCOUNT) for (int i = 0; i < hairCount; i++) totalErrorCount += JourneyOfAHairStrand(hairPoints + i, i, true);
 	if (SHOWTOTALERRORCOUNT) std::cout << "##############################################" << std::endl << "##############################################" <<
 		std::endl << "TOTAL ERROR COUNT BEFORE WIND->" << totalErrorCount << std::endl << std::endl;
 	
@@ -166,7 +161,7 @@ int main()
 	cudaEventCreate(&start); cudaEventCreate(&stop);
 
 	//re-set hair points
-	HairPointASetter(hairCount, headRadius, hairPoints);
+	HairPointASetterGPU(hairCount, headRadius, hairPoints);
 	HairInterpolationSetter(hairCount, hairPoints, interpolation);
 	HairPointBSetter(hairCount, headRadius, hairLength, hairPoints);
 	//save original settings for GPU

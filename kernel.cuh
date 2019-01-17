@@ -23,9 +23,17 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort =
 
 void SaveOriginalSettingsGPU(float headRadius, int hairCount, float hairLength);
 
+void HairPointASetterGPU(int hairCount, float headRadius, hair * hairPoints);
+
 void ApplyWindV0(hair *hairPoints, wind w, int blockSize, int blockCount, int smoothing);
 
+__global__ void StartWindZV2(hair * hairPoints, char sign, float strength);
+
+__global__ void StartWindZV1(hair * hairPoints, char sign, float strength);
+
 __global__ void StartWindZV0(hair *hairPoints, char sign, float strength);
+
+__global__ void CollisionDetectionV1(hair * hairPoints);
 
 __global__ void CollisionDetectionV0(hair* hairPoints);
 
