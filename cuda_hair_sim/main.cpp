@@ -12,8 +12,8 @@
 #define WIND_STRENGTH 1.0f //[0.0f,1.0f]
 
 //------------------------ render related macros
-#define SCREEN_WIDTH 1600
-#define SCREEN_HEIGHT 900
+#define SCREEN_WIDTH 1200
+#define SCREEN_HEIGHT 1060
 #define NUMBER_OF_HAIRS_TO_RENDER (HAIRCOUNT/96)
 #define SHOWTOTALERRORCOUNT true
 #define PRINT1RANDOMHAIRINFORMATION false //change journey  of a hair strand too
@@ -84,7 +84,7 @@ int render(hair* hairpoints,char *title)
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
 	glMatrixMode(GL_PROJECTION); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
 	glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-	glOrtho(-SCREEN_WIDTH/2, SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, SCREEN_HEIGHT/2, -100, 100); // essentially set coordinate system
+	glOrtho(-SCREEN_WIDTH/2, SCREEN_WIDTH/2, -SCREEN_HEIGHT/1.4f, SCREEN_HEIGHT/3.5f, -100, 100); // essentially set coordinate system
 	glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
 	glLoadIdentity(); // same as above comment
 
